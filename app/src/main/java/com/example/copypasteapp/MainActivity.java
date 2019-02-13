@@ -28,7 +28,8 @@ public class MainActivity extends AppCompatActivity {
         ettext = findViewById(R.id.textWrite);
 
         clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
-
+        clipboardManager.addPrimaryClipChangedListener(
+                mOnPrimaryClipChangedListener);
 
         if(!clipboardManager.hasPrimaryClip())
         {
@@ -70,6 +71,27 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+    public ClipboardManager.OnPrimaryClipChangedListener mOnPrimaryClipChangedListener =
+            new ClipboardManager.OnPrimaryClipChangedListener() {
+                @Override
+                public void onPrimaryClipChanged() {
+                    //if changed update the text lbl
+                      if (!(mClipboardManager.hasPrimaryClip())) {
+                        ClipData clip = mClipboardManager.getPrimaryClip();
+                        ClipData.Item  item = clip.getItemAt(0);
+                        String clip_text_url = item.getText().toString();
+                          txttext.setText(clip_text_url);
+                        Toast.makeText(getApplicationContext(), clip_text_url, Toast.LENGTH_LONG).show();
+                        if (isValid(clip_text_url)) {
+                            String endpoint = "https://see-the-light.herokuapp.com/news/get?link=";
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "copy a valid news url", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+            };
 
     }
 }
